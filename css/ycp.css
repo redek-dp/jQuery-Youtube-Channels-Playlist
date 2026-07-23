@@ -1,7 +1,7 @@
 /******************************************************
-* #### jQuery-Youtube-Channels-Playlist v7.0 ####
+* #### ycp.js v8.0 ####
 * Coded by Ican Bachors 2014.
-* https://github.com/bachors/jQuery-Youtube-Channels-Playlist
+* https://github.com/bachors/ycp.js
 * Updates will be posted to this site.
 ******************************************************/
 
@@ -141,7 +141,6 @@
 	padding: 10px;
 	display: block;
 	overflow: hidden;
-	*overflow: visible;
 }
 
 .ycp .belah .luhur div.title {
