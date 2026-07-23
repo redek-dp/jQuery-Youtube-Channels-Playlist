@@ -1,4 +1,4 @@
-jQuery-Youtube-Channels-Playlist
+ycp.js - Youtube Channels Playlist
 ================================
 <h2>Update youtube API v3</h2>
 <p>YouTube device support message<br>
@@ -35,23 +35,10 @@ related : true. Default = false</pre>
 &lt;div class="demo" data-ycp_title="#Javascript - Sekolah Koding" data-ycp_channel="PLCZlgfAG0GXAiH1acKFPx8EtpJAq44gjP"&gt;&lt;/div&gt; &lt;!-- By PlayListId --&gt;
 &lt;div class="demo" data-ycp_title="#News - Vevo Uk" data-ycp_channel="vevouk"&gt;&lt;/div&gt; &lt;!-- By UserName --&gt;
 
-&lt;!-- jQuery --&gt;
-&lt;script src="//code.jquery.com/jquery-2.1.1.min.js"&gt;&lt;/script&gt;
+&lt;!-- JS --&gt;
 &lt;script src="js/ycp.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-$(function() {
-        
-    $("#unix").ycp({
-        apikey : 'xxxxxxxxxxxxxxxx',
-        playlist : 6,
-        autoplay : true,
-        related : true
-    });
-            
-    $(".demo").ycp({
-        apikey : 'xxxxxxxxxxxxxxxx'
-    });
-            
-});
+    ycp("#unix", { apikey: 'xxxxxxxx', playlist: 6, autoplay: true });
+    ycp(".demo",  { apikey: 'xxxxxxxx' });
 &lt;/script&gt;</pre>
 </p>
