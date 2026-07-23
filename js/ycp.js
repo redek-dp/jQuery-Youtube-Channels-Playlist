@@ -1,184 +1,145 @@
 /******************************************************
-* #### jQuery-Youtube-Channels-Playlist v7.0 ####
+* #### ycp.js v8.0 ####
 * Coded by Ican Bachors 2014.
-* https://github.com/bachors/jQuery-Youtube-Channels-Playlist
+* https://github.com/bachors/ycp.js
 * Updates will be posted to this site.
 ******************************************************/
 
-$.fn.ycp = function(j) {
-    const n = {
-        playlist: 10,
-        autoplay: false,
-        related: false
-    };
-    j.playlist = (j.playlist == undefined ? n.playlist : j.playlist);
-    j.autoplay = (j.autoplay == undefined ? n.autoplay : j.autoplay);
-    j.related = (j.related == undefined ? n.related : j.related);
-    $(this).each(function(i, a) {
-        const b = ($(this).attr('id') != null && $(this).attr('id') != undefined ? `#${$(this).attr('id')}` : `.${$(this).attr('class')}`);
-        const title = ($(this).data('ycp_title') == undefined ? 'YCP.js' : $(this).data('ycp_title'));
-        const channel = $(this).data('ycp_channel');
-        const html = `<div class="ycp"><div class="belah ycp_vid_play" title="Play video"></div><div class="belah" id="ycp_youtube_channels${i}"></div></div>`;
-        $(this).html(html);
-        if (channel.substring(0, 2) == 'PL' || channel.substring(0, 2) == 'UU') {
-            const c = '';
-            ycp_list(title, channel, c, i, b)
+function ycp(selector, j) {
+    const n = { playlist: 10, autoplay: false, related: false };
+    j.playlist = j.playlist ?? n.playlist;
+    j.autoplay = j.autoplay ?? n.autoplay;
+    j.related  = j.related  ?? n.related;
+
+    const els = selector.startsWith('#')
+        ? [document.querySelector(selector)]
+        : [...document.querySelectorAll(selector)];
+
+    els.forEach((el, i) => {
+        const b = el.id ? `#${el.id}` : `.${el.className.split(' ')[0]}`;
+        const title   = el.dataset.ycp_title   || 'YCP.js';
+        const channel = el.dataset.ycp_channel;
+        el.innerHTML  = `<div class="ycp"><div class="belah ycp_vid_play" title="Play video"></div><div class="belah" id="ycp_youtube_channels${i}"></div></div>`;
+
+        if (channel.substring(0, 2) === 'PL' || channel.substring(0, 2) === 'UU') {
+            ycp_list(title, channel, '', i, b);
         } else {
-            const d = (channel.substring(0, 2) == 'UC' ? 'id' : 'forUsername');
-            ycp_play(title, channel, d, i, b)
+            const d = channel.substring(0, 2) === 'UC' ? 'id' : 'forUsername';
+            ycp_play(title, channel, d, i, b);
         }
     });
 
+    function get(url) {
+        return fetch(url).then(r => r.json());
+    }
+
     function ycp_play(g, c, d, e, f) {
-        $.ajax({
-            url: `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&${d}=${c}&key=${j.apikey}`,
-            crossDomain: true,
-            dataType: 'json'
-        }).done(a => {
-            const b = a.items[0].contentDetails.relatedPlaylists.uploads;
-            const pageToken = '';
-            ycp_list(g, b, pageToken, e, f)
-        })
+        get(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&${d}=${c}&key=${j.apikey}`)
+            .then(a => {
+                const b = a.items[0].contentDetails.relatedPlaylists.uploads;
+                ycp_list(g, b, '', e, f);
+            });
     }
 
     function ycp_list(h, f, g, k, l) {
-        $.ajax({
-            url: `https://www.googleapis.com/youtube/v3/playlistItems?part=status,snippet&maxResults=${j.playlist}&playlistId=${f}&key=${j.apikey}&pageToken=${g}`,
-            dataType: 'json'
-        }).done(c => {
-            let d = '';
-            d += '<div class="luhur">';
-            d += `<div class="title">${h}</div>`;
-            d += '<span class="tombol vid-prev" title="Previous videos">Prev</span> ';
-            d += '<span class="tombol vid-next" title="Next videos">Next</span><span class="about" title="ycp.js"><a href="https://github.com/bachors/jQuery-Youtube-Channels-Playlist" target="_BLANK">♥</a></span></div><div class="handap">';
-            $.each(c.items, (i, a) => {
-                if (c.items[i].status.privacyStatus == "public") {
-                    const b = c.items[i].snippet.resourceId.videoId;
-                    ycp_part(b, i, k, l);
-                    d += `<div class="play" data-vvv="${b}" data-img="${c.items[i].snippet.thumbnails.high.url}" title="${c.items[i].snippet.title}"><div class="thumb"><img src="${c.items[i].snippet.thumbnails.default.url}" alt=" "><span class="tm${i}"></span></div>`;
-                    d += `<div class="title">${c.items[i].snippet.title}</div><span class="mute by${i}"></span><br><span class="mute views${i}"></span> <span class="mute">-</span> <span class="mute date${i}"></span></div>`
-                }
-            });
-            d += '</div>';
-            $(`${l} .ycp div#ycp_youtube_channels${k}`).html(d);
-            if (c.prevPageToken == null || c.prevPageToken == undefined) {
-                const e = $(`${l} .ycp div#ycp_youtube_channels${k} div.play`).attr("data-vvv");
-                const imag = $(`${l} .ycp div#ycp_youtube_channels${k} div.play`).attr("data-img");
-                if (j.autoplay == false) {
-                    $(`${l} .ycp div.ycp_vid_play:eq(${k})`).html('<a href="#"></a>');
-                    $(`${l} .ycp div.ycp_vid_play:eq(${k})`).css('background', `url(${imag}) no-repeat`);
-                    $(`${l} .ycp div.ycp_vid_play:eq(${k})`).css('-webkit-background-size', 'cover');
-                    $(`${l} .ycp div.ycp_vid_play:eq(${k})`).css('-moz-background-size', 'cover');
-                    $(`${l} .ycp div.ycp_vid_play:eq(${k})`).css('-o-background-size', 'cover');
-                    $(`${l} .ycp div.ycp_vid_play:eq(${k})`).css('background-size', 'cover')
-                } else {
-                    $(`${l} .ycp div.ycp_vid_play:eq(${k})`).html(`<iframe src="//www.youtube.com/embed/${e}?rel=${j.related ? 1 : 0}&amp;autoplay=1" allowfullscreen="" frameborder="0" class="bingkay"></iframe>`)
-                }
-                $(`${l} .ycp div#ycp_youtube_channels${k} div`).removeClass('vid-active');
-                $(`${l} .ycp div#ycp_youtube_channels${k} div.play:eq(0)`).addClass('vid-active')
-            } else {
-                $(`${l} .ycp div#ycp_youtube_channels${k} span.vid-prev`).click(() => {
-                    g = c.prevPageToken;
-                    ycp_list(h, f, g, k, l);
-                    return false
-                })
-            }
-            $(`${l} .ycp div#ycp_youtube_channels${k} span.vid-next`).click(() => {
-                g = c.nextPageToken;
-                ycp_list(h, f, g, k, l);
-                return false
-            });
-            $(`${l} .ycp div#ycp_youtube_channels${k} div.play`).each(function() {
-                $(this).click(function() {
-                    const a = $(this).attr("data-vvv");
-                    const m = $(this).attr("data-img");
-                    $(`${l} .ycp div#ycp_youtube_channels${k} div`).removeClass('vid-active');
-                    $(this).addClass('vid-active');
-                    if (j.autoplay == false) {
-                        $(`${l} .ycp div.ycp_vid_play:eq(${k})`).html('<a href="#"></a>');
-                        $(`${l} .ycp div.ycp_vid_play:eq(${k})`).css('background', `url(${m}) no-repeat`);
-                        $(`${l} .ycp div.ycp_vid_play:eq(${k})`).css('-webkit-background-size', 'cover');
-                        $(`${l} .ycp div.ycp_vid_play:eq(${k})`).css('-moz-background-size', 'cover');
-                        $(`${l} .ycp div.ycp_vid_play:eq(${k})`).css('-o-background-size', 'cover');
-                        $(`${l} .ycp div.ycp_vid_play:eq(${k})`).css('background-size', 'cover')
-                    } else {
-                        $(`${l} .ycp div.ycp_vid_play:eq(${k})`).html(`<iframe src="//www.youtube.com/embed/${a}?rel=${j.related ? 1 : 0}&amp;autoplay=1" allowfullscreen="" frameborder="0" class="bingkay"></iframe>`)
+        get(`https://www.googleapis.com/youtube/v3/playlistItems?part=status,snippet&maxResults=${j.playlist}&playlistId=${f}&key=${j.apikey}&pageToken=${g}`)
+            .then(c => {
+                let d = '<div class="luhur">';
+                d += `<div class="title">${h}</div>`;
+                d += '<span class="tombol vid-prev" title="Previous videos">Prev</span> ';
+                d += '<span class="tombol vid-next" title="Next videos">Next</span><span class="about" title="ycp.js"><a href="https://github.com/bachors/jQuery-Youtube-Channels-Playlist" target="_BLANK">♥</a></span></div><div class="handap">';
+                c.items.forEach((item, i) => {
+                    if (item.status.privacyStatus === 'public') {
+                        const b = item.snippet.resourceId.videoId;
+                        ycp_part(b, i, k, l);
+                        d += `<div class="play" data-vvv="${b}" data-img="${item.snippet.thumbnails.high.url}" title="${item.snippet.title}"><div class="thumb"><img src="${item.snippet.thumbnails.default.url}" alt=" "><span class="tm${i}"></span></div>`;
+                        d += `<div class="title">${item.snippet.title}</div><span class="mute by${i}"></span><br><span class="mute views${i}"></span> <span class="mute">-</span> <span class="mute date${i}"></span></div>`;
                     }
-                    return false
-                })
+                });
+                d += '</div>';
+
+                const container = document.querySelector(`${l} .ycp div#ycp_youtube_channels${k}`);
+                container.innerHTML = d;
+
+                const vidPlay = document.querySelectorAll(`${l} .ycp div.ycp_vid_play`)[k];
+
+                function setPlayer(videoId, imgUrl) {
+                    if (!j.autoplay) {
+                        vidPlay.innerHTML = '<a href="#"></a>';
+                        vidPlay.style.cssText = `background:url(${imgUrl}) no-repeat center/cover`;
+                    } else {
+                        vidPlay.innerHTML = `<iframe src="//www.youtube.com/embed/${videoId}?rel=${j.related ? 1 : 0}&amp;autoplay=1" allowfullscreen="" frameborder="0" class="bingkay"></iframe>`;
+                    }
+                }
+
+                if (!c.prevPageToken) {
+                    const firstPlay = container.querySelector('div.play');
+                    setPlayer(firstPlay.dataset.vvv, firstPlay.dataset.img);
+                    container.querySelectorAll('div').forEach(el => el.classList.remove('vid-active'));
+                    container.querySelectorAll('div.play')[0].classList.add('vid-active');
+                } else {
+                    container.querySelector('span.vid-prev').addEventListener('click', e => {
+                        e.preventDefault();
+                        ycp_list(h, f, c.prevPageToken, k, l);
+                    });
+                }
+
+                container.querySelector('span.vid-next').addEventListener('click', e => {
+                    e.preventDefault();
+                    ycp_list(h, f, c.nextPageToken, k, l);
+                });
+
+                container.querySelectorAll('div.play').forEach(el => {
+                    el.addEventListener('click', e => {
+                        e.preventDefault();
+                        container.querySelectorAll('div').forEach(d => d.classList.remove('vid-active'));
+                        el.classList.add('vid-active');
+                        setPlayer(el.dataset.vvv, el.dataset.img);
+                    });
+                });
+
+                vidPlay.addEventListener('click', e => {
+                    e.preventDefault();
+                    const active = container.querySelector('div.play.vid-active');
+                    vidPlay.innerHTML = `<iframe src="//www.youtube.com/embed/${active.dataset.vvv}?rel=${j.related ? 1 : 0}&amp;autoplay=1" allowfullscreen="" frameborder="0" class="bingkay"></iframe>`;
+                });
             });
-            $(`${l} .ycp div.ycp_vid_play:eq(${k})`).click(function() {
-                const a = $(`${l} .ycp div#ycp_youtube_channels${k} div.play.vid-active`).attr("data-vvv");
-                $(this).html(`<iframe src="//www.youtube.com/embed/${a}?rel=${j.related ? 1 : 0}&amp;autoplay=1" allowfullscreen="" frameborder="0" class="bingkay"></iframe>`);
-                return false
-            })
-        })
     }
 
     function ycp_part(c, i, d, e) {
-        $.ajax({
-            url: `https://www.googleapis.com/youtube/v3/videos?id=${c}&key=${j.apikey}&part=contentDetails,snippet,statistics`,
-            dataType: 'json'
-        }).done(a => {
-            const b = a.items[0].contentDetails.duration;
-            let dataw = '';
-            let menit = '';
-            let detik = '';
-            if (b.match(/M/g)) {
-                dataw = b.split('M');
-                menit = dataw[0].replace('PT', '');
-                if (dataw[1] != '') {
-                    detik = dataw[1].replace('S', '')
+        get(`https://www.googleapis.com/youtube/v3/videos?id=${c}&key=${j.apikey}&part=contentDetails,snippet,statistics`)
+            .then(a => {
+                const b = a.items[0].contentDetails.duration;
+                let menit, detik;
+                if (b.includes('M')) {
+                    const parts = b.split('M');
+                    menit = parts[0].replace('PT', '');
+                    detik = parts[1] ? parts[1].replace('S', '') : '00';
                 } else {
-                    detik = '00'
+                    menit = '00';
+                    detik = b.split('PT')[1].replace('S', '');
                 }
-            } else {
-                dataw = b.split('PT');
-                menit = '00';
-                detik = dataw[1].replace('S', '')
-            }
-            detik = (detik.length > 1 ? detik : `0${detik}`);
-            $(`${e} .ycp div#ycp_youtube_channels${d} span.tm${i}`).html(`${menit}:${detik}`);
-            $(`${e} .ycp div#ycp_youtube_channels${d} span.by${i}`).html(`by ${a.items[0].snippet.channelTitle}`);
-            $(`${e} .ycp div#ycp_youtube_channels${d} span.views${i}`).html(`${addCommas(a.items[0].statistics.viewCount)} views`);
-            $(`${e} .ycp div#ycp_youtube_channels${d} span.date${i}`).html(_timeSince(new Date(a.items[0].snippet.publishedAt).getTime()))
-        })
+                detik = detik.length > 1 ? detik : `0${detik}`;
+                const sel = `${e} .ycp div#ycp_youtube_channels${d}`;
+                document.querySelector(`${sel} span.tm${i}`).innerHTML    = `${menit}:${detik}`;
+                document.querySelector(`${sel} span.by${i}`).innerHTML    = `by ${a.items[0].snippet.channelTitle}`;
+                document.querySelector(`${sel} span.views${i}`).innerHTML = `${addCommas(a.items[0].statistics.viewCount)} views`;
+                document.querySelector(`${sel} span.date${i}`).innerHTML  = _timeSince(new Date(a.items[0].snippet.publishedAt).getTime());
+            });
     }
 
     function _timeSince(a) {
-        const s = Math.floor((new Date() - a) / 1000);
-        let i = Math.floor(s / 31536000);
-        if (i > 1) {
-            return `${i} years ago`
-        }
-        i = Math.floor(s / 2592000);
-        if (i > 1) {
-            return `${i} months ago`
-        }
-        i = Math.floor(s / 86400);
-        if (i > 1) {
-            return `${i} days ago`
-        }
-        i = Math.floor(s / 3600);
-        if (i > 1) {
-            return `${i} hours ago`
-        }
-        i = Math.floor(s / 60);
-        if (i > 1) {
-            return `${i} minutes ago`
-        }
-        return `${Math.floor(s)} seconds ago`
+        const s = Math.floor((Date.now() - a) / 1000);
+        let i;
+        if ((i = Math.floor(s / 31536000)) > 1) return `${i} years ago`;
+        if ((i = Math.floor(s / 2592000))  > 1) return `${i} months ago`;
+        if ((i = Math.floor(s / 86400))    > 1) return `${i} days ago`;
+        if ((i = Math.floor(s / 3600))     > 1) return `${i} hours ago`;
+        if ((i = Math.floor(s / 60))       > 1) return `${i} minutes ago`;
+        return `${Math.floor(s)} seconds ago`;
     }
 
     function addCommas(a) {
-        a += '';
-        x = a.split('.');
-        x1 = x[0];
-        x2 = x.length > 1 ? `.${x[1]}` : '';
-        const b = /(\d+)(\d{3})/;
-        while (b.test(x1)) {
-            x1 = x1.replace(b, '$1' + ',' + '$2')
-        }
-        return x1 + x2
+        return String(a).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
 }
