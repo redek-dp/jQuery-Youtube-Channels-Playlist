@@ -3,9 +3,8 @@
 	<head>
 
 		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
-		<meta name="viewport" content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=yes" />
-		
-		<title>Bachors | YCP.js</title>
+		<meta name="viewport" content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=yes" />		
+		<title>ycp.js | Bachors</title>
 
 		<!-- Custom style  Youtube Channels Playlist -->
 		<link type="text/css" rel="stylesheet" href="css/ycp.css" />
@@ -73,7 +72,7 @@
 	</head>
 	<body>	
 		
-		<h1 align="center">Demo <a href="https://github.com/bachors/jQuery-Youtube-Channels-Playlist" target="_BLANK">YCP.JS</a></h1>
+		<h1 align="center">Demo <a href="https://github.com/bachors/jQuery-Youtube-Channels-Playlist" target="_BLANK">ycp.js</a></h1>
 		
 		<p align="center">
 			<input id="tit" type="text" placeholder="Title">
@@ -83,7 +82,7 @@
 		
 		<br>
 		<!-- Selector by Id -->
-		<div id="unix" data-ycp_title="#Demo - Bachors.js.org" data-ycp_channel="UCoiS7s7HrE7bHNuzERi-FCQ"></div> <!-- By ChannelId -->
+		<div id="unix" data-ycp_title="#Demo - bachors.id" data-ycp_channel="PLLZytswN8jaU"></div> <!-- By ChannelId -->
 		<br><br>
 		
 		<!-- Selector by ClassName -->
@@ -102,66 +101,21 @@
 &lt;div class="demo" data-ycp_title="#Javascript - Sekolah Koding" data-ycp_channel="PLCZlgfAG0GXAiH1acKFPx8EtpJAq44gjP"&gt;&lt;/div&gt; &lt;!-- By PlayListId --&gt;
 &lt;div class="demo" data-ycp_title="#News - Vevo Uk" data-ycp_channel="vevouk"&gt;&lt;/div&gt; &lt;!-- By UserName --&gt;
 
-&lt;!-- jQuery --&gt;
-&lt;script src="//code.jquery.com/jquery-2.1.1.min.js"&gt;&lt;/script&gt;
+&lt;!-- JS --&gt;
 &lt;script src="js/ycp.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-$(function() {
-        
-    $("#unix").ycp({
-        apikey : 'xxxxxxxxxxxxxxxx',
-        playlist : 7,
-        autoplay : true,
-        related : true
-    });
-			
-    $(".demo").ycp({
-        apikey : 'xxxxxxxxxxxxxxxx'
-    });
-            
-});
+	ycp("#unix", { apikey: xxxxxxx, playlist: 6, autoplay: true, related: true });
+	ycp(".demo",  { apikey: xxxxxxx });
 &lt;/script&gt;</pre>
 
-		<!-- include jQuery -->
-		<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
-
-		<!-- jQuery Youtube Channels Playlist -->
+		<!-- ycp.js -->
 		<script src="js/ycp.js"></script>
 
 		<!-- Setting Example -->
-		<script>		
-		$(function() {
-
-			const apikey = "AIzaSyA0XdFjyX0c5pTAxNCIEPSnuGQ-cL2PLE0";
-		
-			$("#unix").ycp({
-				apikey : apikey,
-				playlist : 7,
-				autoplay : true,
-				related : true
-			});
-			
-			$(".demo").ycp({
-				apikey : apikey
-			});
-		
-			$("#go").click(function(){
-				if($("#tit").val() != '' && $("#ch").val() != ''){
-					$("#unix").data('ycp_title', $("#tit").val());
-					$("#unix").data('ycp_channel', $("#ch").val());
-					$("#unix").ycp({
-						apikey : apikey,
-						playlist : 10,
-						autoplay : true,
-						related : true
-					});
-				}else{
-					alert('Not empty!');
-				}
-				return false;
-			});
-			
-		});
+		<script>
+			const apikey = "AIzaSyDP4jj5m879TbJlaP4HFdshQg8oFkJnJME";
+			ycp("#unix", { apikey: apikey, playlist: 6, autoplay: true, related: true });
+			ycp(".demo",  { apikey: apikey });
 		</script>
 
 	</body>
