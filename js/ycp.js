@@ -1,9 +1,9 @@
-/******************************************************
+/***************************************
 * #### ycp.js v8.0 ####
 * Coded by Ican Bachors 2014.
 * https://github.com/bachors/ycp.js
 * Updates will be posted to this site.
-******************************************************/
+***************************************/
 
 function ycp(selector, j) {
     const n = { playlist: 10, autoplay: false, related: false };
@@ -47,13 +47,13 @@ function ycp(selector, j) {
                 let d = '<div class="luhur">';
                 d += `<div class="title">${h}</div>`;
                 d += '<span class="tombol vid-prev" title="Previous videos">Prev</span> ';
-                d += '<span class="tombol vid-next" title="Next videos">Next</span><span class="about" title="ycp.js"><a href="https://github.com/bachors/jQuery-Youtube-Channels-Playlist" target="_BLANK">♥</a></span></div><div class="handap">';
+                d += '<span class="tombol vid-next" title="Next videos">Next</span><span class="about" title="ycp.js"><a href="https://github.com/bachors/jQuery-Youtube-Channels-Playlist" target="_BLANK">❤︎</a></span></div><div class="handap">';
                 c.items.forEach((item, i) => {
                     if (item.status.privacyStatus === 'public') {
                         const b = item.snippet.resourceId.videoId;
                         ycp_part(b, i, k, l);
                         d += `<div class="play" data-vvv="${b}" data-img="${item.snippet.thumbnails.high.url}" title="${item.snippet.title}"><div class="thumb"><img src="${item.snippet.thumbnails.default.url}" alt=" "><span class="tm${i}"></span></div>`;
-                        d += `<div class="title">${item.snippet.title}</div><span class="mute by${i}"></span><br><span class="mute views${i}"></span> <span class="mute">-</span> <span class="mute date${i}"></span></div>`;
+                        d += `<div class="meta"><div class="title">${item.snippet.title}</div><span class="mute by${i}"></span><span class="mute"><span class="views${i}"></span> • <span class="date${i}"></span></span></div></div>`;
                     }
                 });
                 d += '</div>';
